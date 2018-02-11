@@ -1,22 +1,6 @@
 clear;
 %-----------INPUTS-------------%
 %-------------------Datasets----------------%
-%{
-x1=[50,50;45,50;45,40;43,47;50,51;34,56;31,45;67,34;43,56;41,30];
-x2=[1,1;100,1;1,100;100,100;90,2;100,98;1,5;3,45;90,100;45,4];
-label1=[1;1;1;1;1;1;1;1;1;1];
-label2=[-1;-1;-1;-1;-1;-1;-1;-1;-1;-1];
-%}
-%x=[1,10;3,8;5,1;6,3];
-%label=[1;1;-1;-1];
-%{
-x1 = random('Normal',50,6,100,2);
-label1=ones(100,1);
-x2 = random('Normal',10,6,100,2);
-label2=(-1)*ones(100,1);
-x=[x1;x2];
-label=cat(1,label1,label2);
-%}
 
 load iris.dat;
 xi=iris(51:150,1);
@@ -43,15 +27,9 @@ label2=-label2';
 %-------------------Parameters--------------%
 
 Train_per=60;
-%tr=floor(p(1)*((Train_per/100)));%trainning set size
-%te=floor(p(1)-tr);%test set size
 [test_set,test_label,x,label]=SVMdataselect(x1,x2,label1,label2,Train_per);
 p=size(x);
 tr=p(1);
-%test_label=label(p(1)-te+1:p(1));%test_label
-%label=label(1:tr);%training_label
-%test_set=x(p(1)-te+1:p(1),:);%test_set
-%x=x(1:tr,:);%training_set
 a=zeros(1,tr); %initial lagrange Coefficients
 b=0; %initial threshold b
 C=10; %regularization parameter
@@ -78,21 +56,14 @@ end
 for i=1:p(2)
     w(i)=sum(q(:,i));
 end
-%b = label(1) - w*x(1,:)';
-
 
 %----------Testing----------%
 u=test(test_set,test_label,w,b,char,var);
 
 %-------PLOT-------%
 
-%for i=1:tr
-    %if(label(i)==1)
-        scatter(x1(:,1),x1(:,2),'MarkerEdgeColor','b');
-    %elseif(label(i)==-1)
-        scatter(x2(:,1),x2(:,2),'MarkerEdgeColor','r');
-    %end
-%end
+scatter(x1(:,1),x1(:,2),'MarkerEdgeColor','b');
+scatter(x2(:,1),x2(:,2),'MarkerEdgeColor','r');
 
 rx=floor(1.5*max(x(:,1)));
 rn=floor(0.4*min(x(:,1)));
@@ -109,5 +80,4 @@ if(char=='L')
 
 elseif(char=='G')
     y2=sqrt(-2*var*log(-b))+w(1)+w(2)-y1;
-    %plot(y1,y2,'Color',[0 0 0]);
 end
